@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  test:
+    image: alpine:latest
+    volumes:
+      - ../data/users/passwd:/etc/passwd:ro
+      - ../data/users/group:/etc/group:ro
+      - ../data/users/shadow:/etc/shadow:ro
+    user: "${example_u}:${example_g}"
+    command: >
+      /bin/sh -c "echo \"It worked! I'm a container user! Look who I am: `id`\""
+

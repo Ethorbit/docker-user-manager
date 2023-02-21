@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  setup_users: 
+    build:
+      context: ../../build/
+    environment:
+      - HUID=${HUID}
+      - HGID=${HGID}
+    volumes:
+      - ../data/users:/mnt
+
