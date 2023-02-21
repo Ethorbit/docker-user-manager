@@ -1,4 +1,4 @@
-# docker-user-manager
+# ![DockerHub](https://i.imgur.com/tItmtNW.png) [docker-user-manager](https://hub.docker.com/r/ethorbit/user-manager)
 A docker container that creates users and groups from a YAML config and outputs user files that can be mounted in other containers.
 
 ## Inside example/ 
