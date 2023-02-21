@@ -77,6 +77,11 @@ done
 # be used in a docker-compose --env-file to make it possible
 # to use this container's user and group names instead of
 # the ids or the names from the host
-getent passwd | while IFS=: read -r user _ uid gid _; do 
-    printf '%s_u=%i\n%s_g=%i\n' "$user" "$uid" "$user" "$gid" >> /mnt/env
+getent passwd | while IFS=: read -r user _ uid _; do 
+    printf '%s_u=%i\n' "$user" "$uid" >> /mnt/env
 done
+
+getent group | while IFS=: read -r group _ gid _; do
+    printf '%s_g=%i\n' "$group" "$gid" >> /mnt/env
+done
+
