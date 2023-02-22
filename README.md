@@ -49,8 +49,8 @@ Inside the Makefile, we run two docker-compose up's. One is for setting up users
 
 You can run `make test` to run the example.
 
-## Pros
+# Pros
 Users and groups can be shared with other containers with the names remaining isolated from the host
 
-## Cons
+# Cons
 Any changes to users and groups outside the settings will be overriden as soon as the users container starts. To persist changes, you have to edit the settings.yml file and then restart the user container.
