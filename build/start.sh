@@ -20,7 +20,7 @@ users=$(echo "$settings" | yq ".users | keys | .[]")
 echo "Creating groups.."
 for group in $groups; do
     IFS=, read id system password \
-        < <(echo "$settings" | yq -r ".groups.$group | [ .id, .system .password ] | @csv" \
+        < <(echo "$settings" | yq -r ".groups.$group | [ .id, .system, .password ] | @csv" \
         | sed "s/null\|false//g")
 
     groupadd "$group" \
@@ -29,7 +29,7 @@ for group in $groups; do
         
     if [[ $? -eq 0 ]]; then 
         echo "* $group"
-    
+   
         if [[ ! -z "$password" && "$password" != "false" ]]; then
             echo "$group:$password" | chgpasswd
         fi
@@ -67,7 +67,7 @@ for user in $users; do
         echo "* $user"
         
         for group in $groups; do 
-            addgroup "$user" "$group"
+            usermod -a -G "$group" "$user"
             [[ $? -eq 0 ]] && echo "  --> $group"
         done
     fi
