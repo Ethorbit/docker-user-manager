@@ -43,7 +43,7 @@ Entries are parsed in the same order they are written.
 You can also use environment variables, but for them to work, they must also be passed to the users container.
 
 ### Makefile
-Inside the Makefile, we run two docker-compose up's. One is for setting up users and groups and generating the env file, and the other is passing the env file to the *real* project.
+Inside the Makefile, we run two docker-compose up's. One is for setting up users and groups and generating the env file, and the other is passing the env file's variables to the *real* project.
 
 You can run `make test` to run the example.
 
@@ -51,4 +51,4 @@ You can run `make test` to run the example.
 Users and groups can be shared with other containers with the names remaining isolated from the host
 
 # Cons
-Any changes to users and groups outside the settings will be overrided as soon as the users container starts. To persist changes, you have to edit the settings.yml file and then restart the user container.
+Any changes to users and groups outside the settings will be overriden as soon as the users container starts. To persist changes, you have to edit the settings.yml file and then restart the user container.
