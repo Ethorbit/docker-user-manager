@@ -4,10 +4,11 @@ A docker container that creates users and groups from a YAML config and outputs 
 ## Inside example/ 
 
 ### setup\_users/
-This docker-compose project has the sole purpose of creating the users and groups. It will output 4 files to data/users 
+This docker-compose project has the sole purpose of creating the users and groups. It will output 5 files to data/users:
 * passwd
 * group 
 * shadow
+* gshadow
 * env
 
 The env contains the user mappings `username_u` for uid and `username_g` for gid, and we pass it to other compose projects using --env-file.
