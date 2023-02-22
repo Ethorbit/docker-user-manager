@@ -25,11 +25,12 @@ groups:
     example:
         id: 2000
         system: false
-
+        password "securepassword"
 users:
     example:
         id: 2000
         home: "/home/example"
+        base:
         shell: "/bin/sh"
         groups:
            - games

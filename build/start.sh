@@ -1,11 +1,11 @@
 #!/bin/sh
-for f in passwd group shadow env; do 
+for f in passwd group shadow gshadow env; do 
     echo '' > "/mnt/$f"
     chown root:root "/mnt/$f"
 done
 
 chmod 644 /mnt/passwd /mnt/group /mnt/env
-chmod 640 /mnt/shadow
+chmod 600 /mnt/shadow /mnt/gshadow
 
 # Create the users and groups specified by settings.yml
 if [[ ! -f "/mnt/settings.yml" ]]; then 
@@ -19,31 +19,38 @@ users=$(echo "$settings" | yq ".users | keys | .[]")
 
 echo "Creating groups.."
 for group in $groups; do
-    IFS=, read id system \
-        < <(echo "$settings" | yq -r ".groups.$group | [ .id, .system ] | @csv" \
+    IFS=, read id system password \
+        < <(echo "$settings" | yq -r ".groups.$group | [ .id, .system .password ] | @csv" \
         | sed "s/null\|false//g")
 
-    addgroup "$group" \
+    groupadd "$group" \
         `[[ "$id" =~ [0-9]+ ]] && echo -g "$id"` \
-        `[[ ! -z "$system" ]] && echo -S`
-
-    [[ $? -eq 0 ]] && echo "* $group"
+        `[[ ! -z "$system" ]] && echo -r`
+        
+    if [[ $? -eq 0 ]]; then 
+        echo "* $group"
+    
+        if [[ ! -z "$password" && "$password" != "false" ]]; then
+            echo "$group:$password" | chgpasswd
+        fi
+    fi 
 done
 
 echo "Creating users.."
 for user in $users; do 
-    IFS=, read home id password shell system groups \
+    IFS=, read home id password shell system base \
         < <(echo "$settings" | \
-        yq -r ".users.$user | [ .home, .id, .password, .shell, .system ] | @csv" \
+        yq -r ".users.$user | [ .home, .id, .password, .shell, .system, .base ] | @csv" \
         | sed "s/null//g")
-    
-    adduser "$user" -D \
-        `[[ "$home" = "false" ]] && echo -H` \
-        `[[ ! -z "$home" && "$home" != "false" ]] && echo -h "$home"` \
-        `[[ "$id" =~ [0-9]+ ]] && echo -G "$user" -u "$id"` \
+
+    useradd "$user" \
+        `[[ "$home" = "false" ]] && echo -M` \
+        `[[ ! -z "$home" && "$home" != "false" ]] && echo -d "$home"` \
+        `[[ "$id" =~ [0-9]+ ]] && echo -g $user -u "$id"` \
         `[[ ! -z "$shell" ]] && echo -s "$shell" || echo -s "/bin/sh"` \
-        `[[ ! -z "$system" ]] && echo -S`
- 
+        `[[ ! -z "$system" ]] && echo -r` \
+        `[[ ! -z "$base" ]] && echo -b "$base"`
+    
     if [[ $? -eq 0 ]]; then
         echo "* $user"
     
@@ -69,7 +76,7 @@ done
 # Output our user files to the /mnt volume, which 
 # other containers can then have mounted as read-only
 # to have the same users and groups.
-for f in passwd group shadow; do
+for f in passwd group shadow gshadow; do
     cat "/etc/$f" > "/mnt/$f"
 done
 
