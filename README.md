@@ -11,7 +11,7 @@ This docker-compose project has the sole purpose of creating the users and group
 * gshadow
 * env
 
-The env contains the user mappings `username_u` for uid and `username_g` for gid, and we pass it to other compose projects using --env-file.
+The env contains the user mappings `username_u` for uid and `username_g` for gid, and we pass them when running compose commands to use them inside compose files.
 
 ### your\_project
 This docker-compose project would just be whatever your project is meant to be, but by default there is a container which runs as the example user and then outputs its user info to the terminal.
