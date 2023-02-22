@@ -25,7 +25,7 @@ groups:
     example:
         id: 2000
         system: false
-        password "securepassword"
+        password: "securepassword"
 users:
     example:
         id: 2000
