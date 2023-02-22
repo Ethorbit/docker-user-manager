@@ -41,7 +41,7 @@ for user in $users; do
         `[[ "$home" = "false" ]] && echo -H` \
         `[[ ! -z "$home" && "$home" != "false" ]] && echo -h "$home"` \
         `[[ "$id" =~ [0-9]+ ]] && echo -G "$user" -u "$id"` \
-        `[[ ! -z "$shell" ]] && echo -s "$shell"` \
+        `[[ ! -z "$shell" ]] && echo -s "$shell" || echo -s "/bin/sh"` \
         `[[ ! -z "$system" ]] && echo -S`
  
     if [[ $? -eq 0 ]]; then
