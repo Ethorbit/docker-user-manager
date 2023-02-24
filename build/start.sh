@@ -44,7 +44,7 @@ for user in $users; do
         | sed "s/null//g")
 
     useradd "$user" \
-        `[[ "$home" = "false" ]] && echo -M` \
+        `[[ "$home" = "false" ]] && echo -M || echo -m` \
         `[[ ! -z "$home" && "$home" != "false" ]] && echo -d "$home"` \
         `[[ "$id" =~ [0-9]+ ]] && echo -g $user -u "$id"` \
         `[[ ! -z "$shell" ]] && echo -s "$shell" || echo -s "/bin/sh"` \
@@ -91,4 +91,3 @@ done
 getent group | while IFS=: read -r group _ gid _; do
     printf '%s_g=%i\n' "$group" "$gid" >> /mnt/env
 done
-
