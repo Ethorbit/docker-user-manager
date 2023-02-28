@@ -38,15 +38,16 @@ done
 
 echo "Creating users.."
 for user in $users; do 
-    IFS=, read home id password shell system base \
+    IFS=, read home primarygroup id password shell system base \
         < <(echo "$settings" | \
-        yq -r ".users.$user | [ .home, .id, .password, .shell, .system, .base ] | @csv" \
+        yq -r ".users.$user | [ .home, .primarygroup, .id, .password, .shell, .system, .base ] | @csv" \
         | sed "s/null//g")
 
     useradd "$user" \
         `[[ "$home" = "false" ]] && echo -M || echo -m` \
         `[[ ! -z "$home" && "$home" != "false" ]] && echo -d "$home"` \
-        `[[ "$id" =~ [0-9]+ ]] && echo -g $user -u "$id"` \
+        `[[ ! -z "$primarygroup" ]] && echo -g "$primarygroup"` \
+        `[[ "$id" =~ [0-9]+ ]] && echo -u "$id" && [[ -z "$primarygroup" ]] && echo -g "$user"` \
         `[[ ! -z "$shell" ]] && echo -s "$shell" || echo -s "/bin/sh"` \
         `[[ ! -z "$system" ]] && echo -r` \
         `[[ ! -z "$base" ]] && echo -b "$base"`
