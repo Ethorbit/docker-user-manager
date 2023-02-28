@@ -73,6 +73,17 @@ for user in $users; do
     fi
 done
 
+getent passwd | while IFS=: read -r _ _ uid _ _ home _; do
+    if [[ "$uid" -ge 1000 ]]; then
+        case $home in 
+            /) ;;
+            *)
+            chmod "$HOME_PERMISSIONS" "$home"
+            ;;
+        esac
+    fi
+done
+
 # Output our user files to the /mnt volume, which 
 # other containers can then have mounted as read-only
 # to have the same users and groups.
