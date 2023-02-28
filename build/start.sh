@@ -78,7 +78,7 @@ getent passwd | while IFS=: read -r _ _ uid _ _ home _; do
         case $home in 
             /) ;;
             *)
-            chmod "$HOME_PERMISSIONS" "$home"
+            [[ -d "$home" ]] && chmod "$HOME_PERMISSIONS" "$home"
             ;;
         esac
     fi
