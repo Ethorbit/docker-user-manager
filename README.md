@@ -33,6 +33,7 @@ users:
         home: "/home/example"
         base:
         shell: "/bin/sh"
+        primarygroup: 
         groups:
            - games
            - audio
