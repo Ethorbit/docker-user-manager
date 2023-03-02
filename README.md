@@ -41,8 +41,8 @@ users:
         password: "securepassword"
         system: false
         keys:
-           KEY: VALUE
-           ANOTHERKEY: ANOTHERVALUE
+           - KEY=VALUE
+           - ANOTHERKEY=ANOTHERVALUE
         comment: Cool user
 ```
 

@@ -60,11 +60,9 @@ for user in $users; do
     [[ ! -z "$base" ]] && append "command" "-b '$base' "
     [[ ! -z "$comment" ]] && append "command" "-c '$comment' "
     
-    while IFS=, read key value; do
-        if [[ ! -z "$key" ]] && [[ ! -z "$value" ]]; then
-            append "command" "-K $key='$value' "
-        fi
-    done < <(echo "$settings" | yq -r ".users.$user.keys | to_entries | .[] | [ .key, .value ] | @csv")
+    while IFS=, read key_value_pair; do
+        [[ ! -z "$key_value_pair" ]] && append "command" "-K $key_value_pair "
+    done < <(echo "$settings" | yq -r ".users.$user.keys | to_entries | .[] | .value")
 
     eval "$command"
 
