@@ -64,7 +64,7 @@ for user in $users; do
         if [[ ! -z "$key" ]] && [[ ! -z "$value" ]]; then
             append "command" "-K $key='$value' "
         fi
-    done < <(echo "$settings" | yq -r ".users.example.keys | to_entries | .[] | [ .key, .value ] | @csv")
+    done < <(echo "$settings" | yq -r ".users.$user.keys | to_entries | .[] | [ .key, .value ] | @csv")
 
     eval "$command"
 

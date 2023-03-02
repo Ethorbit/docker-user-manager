@@ -40,6 +40,10 @@ users:
            - video 
         password: "securepassword"
         system: false
+        keys:
+           KEY: VALUE
+           ANOTHERKEY: ANOTHERVALUE
+        comment: Cool user
 ```
 
 Entries are parsed in the same order they are written.
