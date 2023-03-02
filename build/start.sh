@@ -37,21 +37,37 @@ for group in $groups; do
 done
 
 echo "Creating users.."
+
+append() {
+    var_name="$1"
+    val="$2"
+    eval "${var_name}=\"\${${var_name}}${val}\""
+}
+
 for user in $users; do 
-    IFS=, read home primarygroup id password shell system base \
+    IFS=, read home primarygroup id password shell system base comment \
         < <(echo "$settings" | \
-        yq -r ".users.$user | [ .home, .primarygroup, .id, .password, .shell, .system, .base ] | @csv" \
+        yq -r ".users.$user | [ .home, .primarygroup, .id, .password, .shell, .system, .base, .comment ] | @csv" \
         | sed "s/null//g")
 
-    useradd "$user" \
-        `[[ "$home" = "false" ]] && echo -M || echo -m` \
-        `[[ ! -z "$home" && "$home" != "false" ]] && echo -d "$home"` \
-        `[[ ! -z "$primarygroup" ]] && echo -g "$primarygroup"` \
-        `[[ "$id" =~ [0-9]+ ]] && echo -u "$id" && [[ -z "$primarygroup" ]] && echo -g "$user"` \
-        `[[ ! -z "$shell" ]] && echo -s "$shell" || echo -s "/bin/sh"` \
-        `[[ ! -z "$system" ]] && echo -r` \
-        `[[ ! -z "$base" ]] && echo -b "$base"`
+    command="useradd $user "
+    [[ "$home" = "false" ]] && append "command" "-M " || append "command" "-m "
+    [[ ! -z "$home" && "$home" != "false" ]] && append "command" "-d '$home' "
+    [[ ! -z "$primarygroup" ]] && append "command" "-g $primarygroup "
+    [[ "$id" =~ [0-9]+ ]] && append "command" "-u $id " && [[ -z "$primarygroup" ]] && append "command" "-g $user "
+    [[ ! -z "$shell" ]] && append "command" "-s '$shell' " || append "command" "-s /bin/sh "
+    [[ ! -z "$system" ]] && append "command" "-r "
+    [[ ! -z "$base" ]] && append "command" "-b '$base' "
+    [[ ! -z "$comment" ]] && append "command" "-c '$comment' "
     
+    while IFS=, read key value; do
+        if [[ ! -z "$key" ]] && [[ ! -z "$value" ]]; then
+            append "command" "-K $key='$value' "
+        fi
+    done < <(echo "$settings" | yq -r ".users.example.keys | to_entries | .[] | [ .key, .value ] | @csv")
+
+    eval "$command"
+
     if [[ $? -eq 0 ]]; then
         echo "* $user"
     
